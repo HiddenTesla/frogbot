@@ -18,3 +18,8 @@ spring:
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+wish:
+  guarantee:
+    character:
+      purple: 10
+      golden: 90

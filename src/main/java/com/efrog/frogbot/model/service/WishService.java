@@ -2,28 +2,40 @@ package com.efrog.frogbot.model.service;
 
 
 import com.efrog.frogbot.model.dao.WishDao;
+import com.efrog.frogbot.model.pojo.Lookback;
 import com.efrog.frogbot.model.pojo.Outcome;
 import com.efrog.frogbot.model.pojo.WishEntry;
+import com.efrog.frogbot.model.util.Dice;
+import com.efrog.frogbot.model.util.lookback.Lookbacker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 @Component
 public class WishService {
 
-    private Random random = new Random();
+    private Dice dice = new Dice();
 
     @Autowired
     private WishDao wishDao;
 
+    @Value("${wish.guarantee.character.purple}")
+    private int characterPurpleGuarantee;
+
+    @Value("${wish.guarantee.character.golden}")
+    private int characterGoldenGuarantee;
+
+    @Autowired
+    @Qualifier("directLookbacker")
+    private Lookbacker lookbacker;
+
     public WishEntry wishCharacterSingle(long userId) {
-        Outcome outcome;
-        int nextRandom = random.nextInt(75);
-        outcome = (nextRandom <= 0? Outcome.GoldenPositive: Outcome.Blue);
+        Outcome outcome = generateNextOutcome(userId);
         WishEntry wish =  new WishEntry(0L, userId, outcome);
         wishDao.insert(wish);
         return wish;
@@ -41,5 +53,56 @@ public class WishService {
 
         Collections.reverse(wishes);
         return wishes;
+    }
+
+    public List<WishEntry> findWishHistory(long userId) {
+        return wishDao.findByUserId(userId);
+    }
+
+    private Outcome generateNextOutcome(long userId) {
+        Lookback lookback = lookbacker.lookback(userId);
+
+        // Guaranteed golden
+        if (lookback.untilLastGolden >= characterGoldenGuarantee - 1) {
+            if (lookback.lastGolden == Outcome.GoldenNegative) {
+                return Outcome.GoldenPositive;
+            }
+            return randomGolden();
+        }
+
+        // Lucky enough to get a golden
+        if (dice.roll(characterGoldenGuarantee)) {
+            if (lookback.lastGolden == Outcome.GoldenNegative) {
+                return Outcome.GoldenPositive;
+            }
+            return randomGolden();
+        }
+
+        // Guaranteed purple
+        if (lookback.untilLastPurpleOrGolden >= characterPurpleGuarantee - 1) {
+            if (lookback.lastPurpleOrGolden == Outcome.PurpleNegative) {
+                return Outcome.PurplePositive;
+            }
+            return randomPurple();
+        }
+
+        // Lucky enough to get a purple
+        if (dice.roll(characterPurpleGuarantee)) {
+            if (lookback.lastPurpleOrGolden == Outcome.PurpleNegative) {
+                return Outcome.PurplePositive;
+            }
+            return randomPurple();
+        }
+
+        // No golden or purple :(
+        return Outcome.Blue;
+    }
+
+    private Outcome randomGolden() {
+        return dice.roll(2)? Outcome.GoldenNegative: Outcome.GoldenPositive;
+    }
+
+    private Outcome randomPurple() {
+        return dice.roll(2)? Outcome.PurpleNegative: Outcome.PurplePositive;
     }
 }

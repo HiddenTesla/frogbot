@@ -5,6 +5,8 @@ import com.efrog.frogbot.model.pojo.WishEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class WishDao {
 
@@ -13,6 +15,10 @@ public class WishDao {
 
     public void insert(WishEntry wishEntry) {
         wishMapper.insert(wishEntry);
+    }
+
+    public List<WishEntry> findByUserId(long userId) {
+        return wishMapper.findByUserId(userId);
     }
 
 }

@@ -1,6 +1,5 @@
 package com.efrog.frogbot.controller;
 
-import com.efrog.frogbot.model.database.mapper.WishMapper;
 import com.efrog.frogbot.model.pojo.WishEntry;
 import com.efrog.frogbot.model.service.WishService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +16,12 @@ import java.util.List;
 public class WishController {
 
     @Autowired
-    private WishMapper wishMapper;
-
-    @Autowired
     private WishService wishService;
+
+    @RequestMapping(method = RequestMethod.GET, path = "/{userId}/character/history")
+    public List<WishEntry> getCharacterWishHistory(@PathVariable long userId) {
+        return wishService.findWishHistory(userId);
+    }
 
     @RequestMapping(method = RequestMethod.POST, path = "/{userId}/character/single")
     public WishEntry wishCharacterSingle(@PathVariable long userId) {
