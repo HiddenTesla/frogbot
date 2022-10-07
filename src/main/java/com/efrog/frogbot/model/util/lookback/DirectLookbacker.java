@@ -22,13 +22,17 @@ public class DirectLookbacker implements Lookbacker {
         boolean foundGolden = false, foundPurpleOrGolden = false;
         Outcome lastGolden = null, lastPurpleOrGolden = null;
         for (WishEntry wish: wishes) {
+            if (foundGolden)
+                break;
 
             Outcome outcome = wish.getOutcome();
-            if (outcome == Outcome.GoldenPositive || outcome == Outcome.GoldenNegative){
+            if (outcome == Outcome.GoldenPositive || outcome == Outcome.GoldenNegative) {
                 foundGolden = true;
                 foundPurpleOrGolden = true;
                 lastGolden = outcome;
-                lastPurpleOrGolden = outcome;
+                if (!foundPurpleOrGolden)
+                    lastPurpleOrGolden = outcome;
+
             }
             else if (outcome == Outcome.PurplePositive || outcome == Outcome.PurpleNegative) {
                 untilLastGolden++;
