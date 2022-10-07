@@ -60,7 +60,7 @@ public class WishService {
     }
 
     public List<WishEntry> findWishHistory(long userId) {
-        return wishDao.findByUserId(userId);
+        return wishDao.findByUserId(userId, characterGoldenGuarantee);
     }
 
     private Outcome generateNextOutcome(long userId) {

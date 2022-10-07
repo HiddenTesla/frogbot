@@ -23,12 +23,12 @@ public interface WishMapper {
 
     @Select(
             "SELECT * FROM `wish` WHERE user_id = #{userId} " +
-                " ORDER BY `wish_id` DESC"
+                " ORDER BY `wish_id` DESC LIMIT #{limit}"
     )
     @Results(id = "common", value = {
             @Result(property = "wishId", column = "wish_id"),
             @Result(property = "userId", column = "user_id"),
             @Result(property = "time",   column = "wish_time"),
     })
-    List<WishEntry> findByUserId(long userId);
+    List<WishEntry> findByUserId(long userId, int limit);
 }

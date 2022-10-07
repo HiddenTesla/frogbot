@@ -17,8 +17,8 @@ public class WishDao {
         wishMapper.insert(wishEntry);
     }
 
-    public List<WishEntry> findByUserId(long userId) {
-        return wishMapper.findByUserId(userId);
+    public List<WishEntry> findByUserId(long userId, int limit) {
+        return wishMapper.findByUserId(userId, limit);
     }
 
 }
