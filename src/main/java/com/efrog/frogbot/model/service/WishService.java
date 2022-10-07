@@ -7,6 +7,7 @@ import com.efrog.frogbot.model.pojo.Outcome;
 import com.efrog.frogbot.model.pojo.WishEntry;
 import com.efrog.frogbot.model.util.Dice;
 import com.efrog.frogbot.model.util.lookback.Lookbacker;
+import com.efrog.frogbot.model.util.probability.GoldenCharacterVendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +34,9 @@ public class WishService {
     @Autowired
     @Qualifier("directLookbacker")
     private Lookbacker lookbacker;
+
+    @Autowired
+    private GoldenCharacterVendor goldenCharacterVendor;
 
     public WishEntry wishCharacterSingle(long userId) {
         Outcome outcome = generateNextOutcome(userId);
@@ -71,7 +75,7 @@ public class WishService {
         }
 
         // Lucky enough to get a golden
-        if (dice.roll(characterGoldenGuarantee)) {
+        if (goldenCharacterVendor.yieldGolden(lookback.untilLastGolden)) {
             if (lookback.lastGolden == Outcome.GoldenNegative) {
                 return Outcome.GoldenPositive;
             }

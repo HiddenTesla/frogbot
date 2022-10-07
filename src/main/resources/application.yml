@@ -23,3 +23,29 @@ wish:
     character:
       purple: 10
       golden: 90
+  probability:
+    character:
+      denominator: 1000
+      threshold: 74
+      lucky: 6
+
+      # Conditional probability that the nth wish yields a gold. Denominator is 1000 as configured above.
+      # Note: starts with 1 instead of 0.
+      gliding:
+        '74': 66
+        '75': 126
+        '76': 186
+        '77': 246
+        '78': 306
+        '79': 366
+        '80': 426
+        '81': 486
+        '82': 546
+        '83': 606
+        '84': 666
+        '85': 726
+        '86': 786
+        '87': 846
+        '88': 906
+        '89': 966
+        '90': 1000
