@@ -4,6 +4,10 @@ server:
 angryfrog:
  :angryfrog:
 
+main:
+  liquibase:
+    change-log: classpath:sql/change_log.sql
+
 spring:
   profiles:
     active: ${ENV_NAME:}
