@@ -1,0 +1,16 @@
+
+server:
+  port: 8081
+angryfrog:
+ :angryfrog:
+
+spring:
+  profiles:
+    active: ${ENV_NAME:}
+
+  datasource:
+    url: jdbc:mysql://localtest:3306/frogbot?serverTimezone=UTC
+    username:
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
