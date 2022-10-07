@@ -1,5 +1,7 @@
 package com.efrog.frogbot.controller;
 
+import com.efrog.frogbot.model.pojo.GoldenReport;
+import com.efrog.frogbot.model.pojo.Outcome;
 import com.efrog.frogbot.model.pojo.WishEntry;
 import com.efrog.frogbot.model.service.WishService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +36,24 @@ public class WishController {
             @RequestParam(required = false, defaultValue = "10") int count)
     {
         return wishService.wishCharacterBatch(userId, count);
+    }
+
+
+    @RequestMapping(method = RequestMethod.POST, path = "/{userId}/character/golden")
+    public GoldenReport wishUntilGoldenCharacter(@PathVariable long userId) {
+        int count = 0;
+        Outcome outcome;
+        do {
+            count++;
+            WishEntry wish = wishService.wishCharacterSingle(userId);
+            outcome = wish.getOutcome();
+        }
+        while(outcome != Outcome.GoldenNegative && outcome != Outcome.GoldenPositive);
+
+        GoldenReport goldenReport = new GoldenReport();
+        goldenReport.setUserId(userId);
+        goldenReport.setCount(count);
+        goldenReport.setOutcome(outcome);
+        return goldenReport;
     }
 }
